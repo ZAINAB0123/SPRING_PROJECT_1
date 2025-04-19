@@ -2,7 +2,6 @@ package ru.itgirls.SPRING_PROJECT_1.service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import ru.itgirls.SPRING_PROJECT_1.entity.User;
 import ru.itgirls.SPRING_PROJECT_1.repository.UserRepository;
 
@@ -13,7 +12,7 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -21,41 +20,43 @@ private final UserRepository userRepository;
 
     public List<User> getUsers() {
         return userRepository.findAll();
-
     }
-    public User create(User user){
-       Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
-       if (optionalUser.isPresent()){
-           throw new IllegalStateException("юзер с таким имейлом уже существует");
-       }
-       user.setAge(Period.between(user.getBirth(), LocalDate.now()).getYears());
+
+    public User create(User user) {
+        Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
+        if (optionalUser.isPresent()) {
+            throw new IllegalStateException("юзер с таким имейлом уже существует");
+        }
+        user.setAge(Period.between(user.getBirth(), LocalDate.now()).getYears());
         return userRepository.save(user);
     }
-   public void delete(Long id) {
-        Optional <User> optionalUser = userRepository.findById(id);
+
+    public void delete(Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             throw new IllegalStateException("юзера с id: " + id + " не существует");
         }
         userRepository.deleteById(id);
-   }
-@Transactional
+    }
+
+    @Transactional
     public void update(Long id, String email, String name) {
-        Optional <User> optionalUser = userRepository.findById(id);
+        Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             throw new IllegalStateException("юзера с id: " + id + " не существует");
         }
         User user = optionalUser.get();
 
-        if(email !=null && !email.equals(user.getEmail())){
-            Optional <User> foundByEmail = userRepository.findByEmail(email);
+        if (email != null && !email.equals(user.getEmail())) {
+            Optional<User> foundByEmail = userRepository.findByEmail(email);
             if (foundByEmail.isPresent()) {
                 throw new IllegalStateException("юзера с email: " + email + " не существует");
             }
             user.setEmail(email);
         }
-        if (name != null & !name.equals(user.getName())){
+        if (name != null & !name.equals(user.getName())) {
             user.setName(name);
         }
-      //  userRepository.save(user);
+        //  userRepository.save(user);
     }
 }
